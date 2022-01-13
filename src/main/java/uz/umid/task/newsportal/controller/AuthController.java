@@ -42,7 +42,7 @@ public class AuthController {
     @PostMapping("/registration")
     public String registrationNewUser(@Valid @ModelAttribute("user") User user, BindingResult theBindingResult, Model model) {
         if (userService.findByUsername(user.getUsername()).isPresent()) {
-            model.addAttribute("message", "user with this username exists");
+            model.addAttribute("errorMessage", "user with this username exists");
             return "registration";
         }
 
@@ -51,7 +51,7 @@ public class AuthController {
         } else {
             user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
             userService.save(user);
-            model.addAttribute("message", "congratulations you can log in");
+            model.addAttribute("successMessage", "congratulations you can log in");
             return "login";
         }
     }

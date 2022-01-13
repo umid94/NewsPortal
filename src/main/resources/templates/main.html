@@ -13,8 +13,75 @@
    <form action="/auth/logout" method="POST">
     <button type="submit">Logout</button>
    </form>
+   <div sec:authorize = "hasRole('ROLE_ADMIN')">
+       <h2>All News</h2>
+       <table border="1" class="table table-striped table-responsive-md">
+           <thead>
+           <tr>
+               <th>Check</th>
+               <th>Check</th>
+               <th>Id</th>
+               <th>News title </th>
+               <th>Content</th>
+               <th>Create date </th>
+               <th>Approved Date</th>
+               <th>Status</th>
+               <th>Author</th>
+           </tr>
+           </thead>
+           <tbody>
+           <tr th:each="news: ${listNews}">
+               <td >
+                   <a th:if="${news.status} == 'disapproved'"
+                      th:href="@{/admin/{page}/news/approved/{id}(id=${news.getId()}, page=${currentPage})}"  class="btn btn-primary" >approved</a>
+               </td>
+               <td >
+                   <a th:if="${news.status} == 'disapproved'"
+                      th:href="@{/admin/{page}/news/refused/{id}(id=${news.getId()}, page=${currentPage})}" class="btn btn-danger" >refused</a>
+                   <a th:if="${news.status} == 'refused'"
+                      th:href="@{/admin/news/approved/{id}(id=${news.getId()})}" class="btn btn-primary" >approved</a>
+               </td>
+               <td th:text="${news.id}" />
+               <td th:text="${news.title}" />
+               <td th:text="${news.content}" />
+               <td th:text="${news.createDate}" />
+               <td th:text="${news.approvedDate}" />
+               <td th:text="${news.status}" />
+               <td th:text="${news.login}" />
+           </tr>
+           </tbody>
+       </table>
 
-   <div >
+       <div th:if="${totalPages > 1}">
+           <div class="row col-sm-10">
+               <div class="col-sm-1">
+                   <a th:if="${currentPage > 1}"
+                      th:href="@{/admin/{page}(page=${currentPage - 1})}">Previous</a>
+                   <span th:unless="${currentPage > 1}">Previous</span>
+               </div>
+
+               <div class="col-sm-1">
+					<span th:each="i: ${#numbers.sequence(1, totalPages)}">
+						<a th:if="${currentPage != i}"
+                           th:href="@{/admin/{page}(page=${i})}">[[${i}]]</a>
+						<span th:unless="${currentPage != i}">[[${i}]]</span>  &nbsp; &nbsp;
+					</span>
+               </div>
+               <div class="col-sm-1">
+                   <a th:if="${currentPage < totalPages}"
+                      th:href="@{/admin/{page}(page=${currentPage + 1})}">Next</a>
+                   <span th:unless="${currentPage < totalPages}">Next</span>
+               </div>
+
+               <div class="col-sm-1">
+                   <a th:if="${currentPage < totalPages}"
+                      th:href="@{/admin/{page}(page=${totalPages})}">Last</a>
+                   <span th:unless="${currentPage < totalPages}">Last</span>
+               </div>
+           </div>
+       </div>
+   </div>
+   <div sec:authorize = "hasRole('ROLE_USER')">
        <form action="/main-page/news/add" method="GET">
            <button type="submit">Add news</button>
        </form>

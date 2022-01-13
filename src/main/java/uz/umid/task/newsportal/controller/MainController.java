@@ -29,19 +29,19 @@ public class MainController {
     private final NewsService newsService;
 
     @GetMapping("main-page")
-    public String getSuccessPage(Model model, Authentication auth) {
-
-        String role = String.valueOf(auth.getAuthorities());
-        if (role.contentEquals("[ROLE_ADMIN]")) {
+    public String getSuccessPage(Model model, Authentication authentication) {
+        String list = String.valueOf(authentication.getAuthorities());
+        if (list.contentEquals("[ROLE_ADMIN]")) {
             return findPaginated(1, model);
         } else {
             return findApprovedNewsPaginated(1, model);
         }
+
     }
 
     @GetMapping("admin/{pageNumber}")
-    @PreAuthorize("hasRole(ROLE_ADMIN)")
-    public String findPaginated(@PathVariable ("pageNumber") int pageNumber, Model model) {
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public String findPaginated(@PathVariable("pageNumber") int pageNumber, Model model) {
 
         Page<News> page = newsService.findPaginated(pageNumber, PAGE_SIZE);
         List<News> listNews = page.getContent();
@@ -56,11 +56,11 @@ public class MainController {
         model.addAttribute(TOTAL_ITEMS, page.getTotalElements());
 
         model.addAttribute(LIST_NEWS, newsDTOs);
-        return "admin";
+        return "main";
     }
 
     @GetMapping("main-page/{pageNumber}")
-    public String findApprovedNewsPaginated(@PathVariable (value = "pageNumber") int pageNumber, Model model) {
+    public String findApprovedNewsPaginated(@PathVariable(value = "pageNumber") int pageNumber, Model model) {
 
         Page<News> page = newsService.findAllApprovedNewsWithPagination(pageNumber, PAGE_SIZE);
         List<News> listNews = page.getContent();
@@ -78,7 +78,7 @@ public class MainController {
     }
 
     @GetMapping("main-page/my-news/{pageNumber}")
-    public String findMyNewsPaginated(@PathVariable (value = "pageNumber") int pageNumber, Model model) {
+    public String findMyNewsPaginated(@PathVariable(value = "pageNumber") int pageNumber, Model model) {
 
         Page<News> page = newsService.getAllUserNews(pageNumber, PAGE_SIZE);
         List<News> listNews = page.getContent();
@@ -97,14 +97,14 @@ public class MainController {
     }
 
     @GetMapping("admin/{pageNumber}/news/approved/{id}")
-    @PreAuthorize("hasRole(ROLE_ADMIN)")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String approvedNews(@PathVariable("id") Long id, @PathVariable("pageNumber") int page) {
         newsService.approvedNews(id);
         return "redirect:/admin/" + page;
     }
 
     @GetMapping("admin/{pageNumber}/news/refused/{id}")
-    @PreAuthorize("hasRole(ROLE_ADMIN)")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String refusedNews(@PathVariable("id") Long id, @PathVariable("pageNumber") int page) {
         newsService.refusedNews(id);
         return "redirect:/admin/" + page;
@@ -129,7 +129,7 @@ public class MainController {
 
     @GetMapping("main-page/my-news/update/{id}")
     public String updateNews(@PathVariable("id") Long id, Model model) {
-        model.addAttribute("oneNews",newsService.getById(id));
+        model.addAttribute("oneNews", newsService.getById(id));
         return "newsForm";
     }
 }

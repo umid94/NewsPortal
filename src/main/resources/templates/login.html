@@ -5,9 +5,9 @@
 </head>
 <body>
 <h1>Login page</h1>
-<p th:if="${error}" class="error">Wrong username or password</p>
+<p style="color:red" th:if ="${param.error}" class = "error-code"> Неправильное имя пользователя или пароль </p>
+<span style="color:blue" th:text="${successMessage}"/>
 <form th:action="@{/auth/login}" method="post">
-    <span th:text="${message}"/>
     <label for="username">Username</label>:
     <input type="text" id="username" name="username" autofocus="autofocus" /> <br />
     <label for="password">Password</label>:

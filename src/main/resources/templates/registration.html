@@ -5,8 +5,8 @@
 </head>
 <body>
 <h1>Registration page</h1>
+<span style="color:red" th:text="${errorMessage}"/>
 <form th:action="@{/auth/registration}" method="post" th:object="${user}">
-    <span th:text="${message}"/>
     <label >Username</label>:
     <input type="text" th:field="*{username}"/> <br />
     <div style="color:red" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Wrong Username</div>
