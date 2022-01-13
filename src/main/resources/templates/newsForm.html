@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Registration Form</title>
+</head>
+<body>
+<form th:action="@{/main-page/news/save}" method="post" th:object="${oneNews}">
+    <input type="hidden" th:field="*{id}" />
+    <input type="hidden" th:field="*{user}">
+    <label >Title</label>:
+    <input type="text" th:field="*{title}"/><br/>
+    <div style="color:red" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Wrong Title</div>
+    <label >Content</label>:
+    <TEXTAREA type="text" th:field="*{content}" /> <br />
+    <div style="color:red" th:if="${#fields.hasErrors('content')}" th:errors="*{content}">Wrong Content maximum 500 symbol</div>
+    <input type="submit" value="Save" />
+</form>
+</body>
+</html>

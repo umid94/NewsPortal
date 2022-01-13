@@ -1,0 +1,235 @@
+databaseChangeLog:
+  - logicalFilePath: db/changelog/db.changelog-lesson1.yaml
+  - changeSet:
+      id: 1
+      author: Umid
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: username
+                  type: varchar(50)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: password
+                  type: varchar(512)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: varchar(50)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: age
+                  type: INT
+              - column:
+                  name: status
+                  type: varchar(50)
+  - changeSet:
+      id: 2
+      author: Umid
+      changes:
+        - createTable:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(50)
+  - changeSet:
+      id: 3
+      author: Umid
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                  name: user_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: role_id
+                  type: BIGINT
+            tableName: users_roles
+  - changeSet:
+      id: 4
+      author: Umid
+      changes:
+        - addPrimaryKey:
+            columnNames: user_id, role_id
+            tableName: users_roles
+  - changeSet:
+      id: 5
+      author: Umid
+      changes:
+        - addUniqueConstraint:
+            columnNames: name
+            constraintName: UC_ROLESNAME_COL
+            tableName: roles
+  - changeSet:
+      id: 6
+      author: Umid
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: users_roles
+            onDelete: CASCADE
+            constraintName: FK2o0jvgh89lemvvo17cbqvdxaa
+            referencedColumnNames: id
+            referencedTableName: users
+  - changeSet:
+      id: 7
+      author: Umid
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: role_id
+            baseTableName: users_roles
+            constraintName: FKj6m8fwv7oqv74fcehir1a9ffy
+            referencedColumnNames: id
+            referencedTableName: roles
+  - changeSet:
+      id: 8
+      author: Umid
+      changes:
+        - createTable:
+            tableName: news
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: content
+                  type: varchar(500)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: approved_date
+                  type: DATETIME(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_date
+                  type: DATETIME(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(30)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: author_id
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+  - changeSet:
+      id: 9
+      author: Umid
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: news
+            baseColumnNames: author_id
+            onDelete: CASCADE
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: author_news_fk
+  - changeSet:
+      id: 10
+      author: Umid
+      comment: "Create admin user"
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: username
+                  value: "admin"
+              - column:
+                  name: password
+                  value: "$2a$12$D1.IWA/rNQMufNnoMvZx6.eCuhtHLk0dN4f1x5bzSPueFu60v3VOa" #admin hash bcrypt
+              - column:
+                  name: email
+                  value: "admin@gmail.com"
+              - column:
+                  name: age
+                  value: "27"
+              - column:
+                  name: status
+                  value: "ACTIVE"
+      rollback:
+        - delete:
+            tableName: users
+            where: username in ('admin')
+  - changeSet:
+      id: 11
+      author: Umid
+      comment: "Create admin role"
+      changes:
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: name
+                  value: "ROLE_ADMIN"
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: name
+                  value: "ROLE_USER"
+      rollback:
+        - delete:
+            tableName: roles
+            where: name in ('ROLE_ADMIN', 'ROLE_USER')
+  - changeSet:
+      id: 12
+      author: Umid
+      comment: "Create admin role in User_roles"
+      changes:
+        - insert:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: user_id
+                  value: "1"
+              - column:
+                  name: role_id
+                  value: "1"
+        - insert:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: user_id
+                  value: "1"
+              - column:
+                  name: role_id
+                  value: "2"

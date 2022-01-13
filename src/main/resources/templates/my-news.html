@@ -1,0 +1,62 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Main-page</title>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+          crossorigin="anonymous">
+</head>
+<body>
+<form action="/auth/logout" method="POST">
+    <button type="submit">Logout</button>
+</form>
+<div >
+    <form action="/main-page/news/add" method="GET">
+        <button type="submit">Add news</button>
+    </form>
+    <form action="/main-page" method="GET">
+        <button type="submit">All News</button>
+    </form>
+    <h4>My News</h4>
+    <div th:each="news: ${listNews}" class="card-body">
+        <a th:href="@{/main-page/my-news/update/{id}(id=${news.getId()})}"><h4 class="card-title" th:text="${news.title}" /></a>
+        <p class="card-text" th:text="${news.content}" />
+    </div>
+
+    <div th:if="${totalPages > 1}">
+        <div class="row col-sm-10">
+            <div class="col-sm-1">
+                <a th:if="${currentPage > 1}"
+                   th:href="@{/main-page/my-news/{page}(page=${currentPage - 1})}">Previous</a>
+                <span th:unless="${currentPage > 1}">Previous</span>
+            </div>
+
+            <div class="col-sm-1">
+					<span th:each="i: ${#numbers.sequence(1, totalPages)}">
+						<a th:if="${currentPage != i}"
+                           th:href="@{/main-page/my-news/{page}(page=${i})}">[[${i}]]</a>
+						<span th:unless="${currentPage != i}">[[${i}]]</span>  &nbsp; &nbsp;
+					</span>
+            </div>
+            <div class="col-sm-1">
+                <a th:if="${currentPage < totalPages}"
+                   th:href="@{/main-page/my-news/{page}(page=${currentPage + 1})}">Next</a>
+                <span th:unless="${currentPage < totalPages}">Next</span>
+            </div>
+
+            <div class="col-sm-1">
+                <a th:if="${currentPage < totalPages}"
+                   th:href="@{/main-page/my-news/{page}(page=${totalPages})}">Last</a>
+                <span th:unless="${currentPage < totalPages}">Last</span>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+
+
